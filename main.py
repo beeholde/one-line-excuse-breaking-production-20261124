@@ -15,10 +15,18 @@ LINE = (
 
 
 def check_line(text):
-    """The sealed gate accepts 1-180 UTF-8 characters, not only whitespace."""
+    """The sealed gate accepts 1-180 UTF-8 characters, not only whitespace.
+
+    Ties on judge win rate break toward fewer bytes, then earlier receipt,
+    so the line is kept tight (111 chars) rather than padded to the cap.
+    A trailing newline would add a character and a second line, so the
+    writer below uses newline="" and this guard rejects any newline.
+    """
     size = len(text.encode("utf-8"))
     if not 1 <= len(text) <= 180:
-        raise SystemExit(f"entry is {len(text)} characters, gate needs 1-180")
+        raise SystemExit(
+            f"entry is {len(text)} characters / {size} bytes, gate needs 1-180"
+        )
     if not text.strip():
         raise SystemExit("entry must not be only whitespace")
     if text.count("\n") != 0:
